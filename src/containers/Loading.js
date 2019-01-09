@@ -1,27 +1,25 @@
-import React from 'react';
-import { connect } from 'react-redux'
-import img from '../loading_spinner.gif'
+import React from "react";
+import { connect } from "react-redux";
+import img from "../loading_spinner.gif";
 
-let Laoading = ({ loading }) => (
+let Loading = ({ loadingWelcome, loadingUser }) => {
+  const loading = loadingWelcome || loadingUser;
 
-  loading ?
-    <div style={{ textAlign: 'center' }}>
-      <img src={img} alt='loading' />
-      <h1>LOADING</h1>
-    </div> :
-    null
-);
+  return loading ? (
+    <div style={{ textAlign: "center" }}>
+      <img src={img} alt="Loading" />
+    </div>
+  ) : null;
+};
 
-const mapStateToProps = (state) => ({
-  loading: state.loading
-})
+const mapStateToProps = state => ({
+  loadingWelcome: state.welcome.loading,
+  loadingUser: state.user.loading
+});
 
-Laoading = connect(
+Loading = connect(
   mapStateToProps,
   null
-)(Laoading)
+)(Loading);
 
-
-export default Laoading;
-
-
+export default Loading;

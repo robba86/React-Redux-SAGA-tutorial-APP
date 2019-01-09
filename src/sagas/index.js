@@ -1,20 +1,45 @@
-import { put, takeLatest, all } from 'redux-saga/effects';
+import { put, takeEvery, all, call } from "redux-saga/effects";
 
-function* fetchNews() {
+function* fetchWelcome() {
+  const json = yield fetch("http://localhost:3001/welcome/").then(response =>
+    response.json()
+  );
 
-  const json = yield fetch('https://newsapi.org/v1/articles?source=cnn&apiKey=c39a26d9c12f48dba2a5c00e35684ecc')
-    .then(response => response.json(), );
+  yield put({ type: "NEWS_RECEIVED", json: json });
+}
 
-  yield put({ type: "NEWS_RECEIVED", json: json.articles, });
+function getUser(username, password) {
+  const url = `http://localhost:3001/signin/`;
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "cache-control": "no-cache"
+    },
+    body: JSON.stringify({
+      email: username,
+      password: password
+    })
+  }).then(response => response.json());
+}
+
+function* fetchUser({ username, password, resolve, reject }) {
+  const json = yield call(getUser, username, password);
+  // console.log(json);
+  if (json.success === true) {
+    yield put({ type: "USER_RECEIVED", json });
+    yield call(resolve);
+  } else {
+    yield put({ type: "USER_RECEIVED", json });
+    yield call(reject, { user: "No data" });
+  }
 }
 
 function* actionWatcher() {
-  yield takeLatest('GET_NEWS', fetchNews)
+  yield takeEvery("GET_NEWS", fetchWelcome);
+  yield takeEvery("GET_USER", fetchUser);
 }
 
-
 export default function* rootSaga() {
-  yield all([
-    actionWatcher(),
-  ]);
+  yield all([actionWatcher()]);
 }

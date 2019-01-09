@@ -1,12 +1,12 @@
-const reducer = (state = {}, action) => {
+const userReducer = (state = {}, action) => {
   switch (action.type) {
-    case 'GET_NEWS':
+    case "GET_USER":
       return { ...state, loading: true };
-    case 'NEWS_RECEIVED':
-      return { ...state, news: action.json[0], loading: false }
+    case "USER_RECEIVED":
+      return { ...state, user: action.json, loading: false };
     default:
       return state;
   }
 };
 
-export default reducer;
+export default userReducer;
